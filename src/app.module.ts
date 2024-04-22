@@ -12,6 +12,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -23,17 +25,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
       }),
       inject: [ConfigService],
     }),
-    // MailerModule.forRoot({
-    //   transport: {
-    //     host: 'smtp.gmail.com',
-    //     port: 465,
-    //     secure: true,
-    //     auth: {
-    //       user: 'wajahatkahlon@gmail.com',
-    //       pass: 'cjoiipeksrdrfhde',
-    //     },
-    //   },
-    // }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
@@ -41,19 +32,19 @@ import { MailerModule } from '@nestjs-modules/mailer';
         secure: true,
         auth: {
           user: process.env.EMAIL_ID,
-          pass: process.env.EMAIL_PASS,
+          pass: process.env.APP_PASSWORD,
         },
       },
       defaults: {
         from: '"nest-modules" <modules@nestjs.com>',
       },
-      // template: {
-      //   dir: process.cwd() + '/templates/',
-      //   adapter: new HandlebarsAdapter(), // or new PugAdapter()
-      //   options: {
-      //     strict: true,
-      //   },
-      // },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
     }),
     LoggerModule,
     UserModule,

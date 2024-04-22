@@ -9,20 +9,20 @@ export class NotificationsController {
     private emailService: EmailService,
   ) {}
 
-  @Get('send-email')
-  async sendEmail() {
-    try {
-      // await this.emailService.sendMail(
-      //   'kahloon17@gmail.com',
-      //   'Test Email',
-      //   'test',
-      //   { message: 'Hello, this is a test email!' },
-      // );
-      await this.emailService.sendMail1();
+  // @Get('send-email')
+  // async sendEmail() {
+  //   try {
+  //     await this.emailService.sendMail(
+  //       'kahloon17@gmail.com',
+  //       'Test Email',
+  //       'test',
+  //       { message: 'Hello, this is a test email!' },
+  //     );
+  //     // await this.emailService.sendMail();
 
-      return { success: true, message: 'Email sent successfully' };
-    } catch (error) {
-      return { success: false, message: 'Failed to send email', error };
-    }
-  }
+  //     return { success: true, message: 'Email sent successfully' };
+  //   } catch (error) {
+  //     return { success: false, message: 'Failed to send email', error };
+  //   }
+  // }
 }
