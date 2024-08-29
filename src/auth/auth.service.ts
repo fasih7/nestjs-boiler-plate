@@ -4,7 +4,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { generateRandomToken } from './utils/helper-methods';
+import {
+  generateRandomToken,
+  getTokenValues,
+  isNotExpired,
+} from './utils/helper-methods';
 import { UserService } from '../user/user.service';
 import { SuccessResponse } from '../global/consts';
 import { EmailService } from '../notifications/services/email.service';
@@ -160,6 +164,7 @@ export class AuthService {
   async updatePassword({ email, password, token }) {
     const user = await this.userService.findOneByEmail(email);
 
+    //TODO: check case if token.value is {} and passed as same as well | can be handled not empty string
     if (user.token.value !== token)
       throw new UnauthorizedException('Incorrect token');
 
@@ -173,19 +178,4 @@ export class AuthService {
 
     return SuccessResponse;
   }
-}
-
-//Helper Methods
-
-function isNotExpired(expirationTime: string) {
-  const currentTime = new Date().valueOf();
-  return +expirationTime > currentTime;
-}
-
-function getTokenValues(): Token {
-  const value = generateRandomToken(6).toUpperCase();
-  const expiration = new Date()
-    .setMinutes(new Date().getMinutes() + 3)
-    .toString();
-  return { value, expiration };
 }

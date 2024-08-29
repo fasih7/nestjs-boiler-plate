@@ -10,7 +10,7 @@ export class EmailService {
       from: 'Software Agency <softagency@gmail.com>',
       to,
       subject,
-      template: './verification',
+      template,
       context,
     });
     return true;

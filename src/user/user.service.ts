@@ -1,31 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { LoggerService } from '../global/logger';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from './schemas/user.schema';
-import { generateRandomToken } from '../auth/utils/helper-methods';
+import { UserRepo } from './repos/user.repo';
 
 @Injectable()
 export class UserService {
   constructor(
     private logger: LoggerService,
-    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly userRepo: UserRepo,
   ) {}
 
   async create(user: any) {
     this.logger.silly(UserService.name, this.create.name, 'started');
 
-    const result = await this.userModel.create(user);
-
-    return result;
+    try {
+      const result = await this.userRepo.create(user);
+      return result;
+    } catch (error) {
+      if (error.code === 11000)
+        throw new UnprocessableEntityException(
+          'User with this email already exists',
+        );
+      throw error;
+    }
   }
 
   async findOneByEmail(email: string) {
     this.logger.silly(UserService.name, this.findOneByEmail.name, 'started');
 
-    return await this.userModel.findOne({ email });
+    return await this.userRepo.findOne({ email });
   }
 
   // findAll() {
@@ -36,10 +41,10 @@ export class UserService {
   //   return `This action returns a #${id} user`;
   // }
 
-  async update(id: string | Types.ObjectId, updateUser: Record<string, any>) {
+  async update(_id: string | Types.ObjectId, updateUser: Record<string, any>) {
     this.logger.silly(UserService.name, this.update.name, 'started');
 
-    return await this.userModel.findByIdAndUpdate(id, updateUser);
+    return await this.userRepo.findOneAndUpdate({ _id }, updateUser);
   }
 
   remove(id: number) {
