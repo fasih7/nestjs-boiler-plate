@@ -107,7 +107,7 @@ export class AuthService {
     const validate = await validatePassword(password, user?.password);
     if (!validate) throw new UnauthorizedException('Wrong Email or password');
 
-    const payload = { sub: user._id, username: user.email };
+    const payload = { sub: user._id, email: user.email, role: user.role };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

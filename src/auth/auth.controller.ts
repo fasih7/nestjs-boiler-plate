@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { VerifyUserDto } from './dto/verify.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthGuard } from './gaurds/auth.gaurd';
+import { JwtAuthGuard } from './gaurds/auth.gaurd';
 import { ChangePassDto } from './dto/change-pass.dto';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 
@@ -50,13 +50,13 @@ export class AuthController {
     name: 'bearer',
     description: 'Custom header',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('test')
   test(@Request() req) {
     return req.user;
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   changePassword(@Body() changePassDto: ChangePassDto, @Request() req) {
     const email = req.user.email;
     return this.authService.changePassword(email, changePassDto);
